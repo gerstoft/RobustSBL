@@ -116,8 +116,8 @@ for iF = 1:Nfreq
     Yf = squeeze(Y(:,:,iF));
     Ryyf = (1/Nsnapshot) * (Yf * Yf');
 
-    gamma_init = sum(abs(Af' * Yf).^2, 2) / Nsnapshot ./ (sqrt(sum(power(abs(Af),2),1)).^4).';
-    % Note: normalize with norm(Af(:,iColumn))^4, Below Eq. (24) [Initialization] --*
+    gamma_init = sum(abs(Af' * Yf).^2, 2) / Nsnapshot ./ (sum(abs(Af(:,1)).^2)^2).';
+    % Note: normalize with norm(Af(:,1))^4, Eq. (24) [Initialization] --*
 
     % -- Compute the initial noise variance
     if Nsource==1
