@@ -1,4 +1,4 @@
-function [ gamma, report ] = SBL_v5p04( A , Y , method , upar , options )
+function [ gamma, report ] = SBL_v5p05( A , Y , method , upar , options )
 %
 % function [ gamma , report ] = SBL_v4( A , Y , Nfreq, Nsource, flag )
 % The idea behind SBL is to find a diagonal replica 'covariance' Gamma.
@@ -53,7 +53,7 @@ function [ gamma, report ] = SBL_v5p04( A , Y , method , upar , options )
 % NoiseLab/SIO/UCSD gemba@ucsd.edu & snannuru@ucsd.edu
 
 %%
-options.SBL_v = '5.04';
+options.SBL_v = '5.05';
 
 %% slicing
 
