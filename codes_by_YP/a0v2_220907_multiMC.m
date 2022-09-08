@@ -11,13 +11,13 @@ addpath([cd,'/_common'])
 % Number_of_DOAs = 2  ;
 % function errorDOAcutoff, threshold = 10 [deg.]
 % save results: DOAs & errors; struct('theta',theta(Ilocs),'error',DoA_error);
-
+% findpeaks for error calculation, 'Npeaks', Number_of_DOAs "+ 2", minPeakSeparation: 5[deg.] (=5/dphi points)
 
 %% Noise model
-% model = 'Gaussian',                      nu_model_string = '';
+model = 'Gaussian',                      nu_model_string = '';
 % model = 'epscont', epsilon_model = 0.05, lambda_model  = 10.0, nu_model_string = 'epsilon=5e-2_lambda=10', 
 %                 noise_enhancement = (1-epsilon_model) + epsilon_model*lambda_model^2,
-model = 'Complex-Student', nu_model = 2.1, nu_model_string = '2p1';
+% model = 'Complex-Student', nu_model = 2.1, nu_model_string = '2p1';
 
 %% Environment parameters
 freq   =  2.0E+03;    % frequency (Hz)
@@ -77,8 +77,8 @@ Nsnapshot   = 25;               % number of snapshots
 %% Simulation parameters
 % noise standard deviation sigma
 
-% SNRs = 30:-3:-9;
-SNRs = 30:-6:-9;
+SNRs = 30:-3:-9;
+% SNRs = 30:-6:-9;
 % SNRs = [50;45;40];
 % SNR  = SNRs(6);
 % SNR = [14.9081800077602]; % dB
@@ -123,7 +123,7 @@ for k=1:Number_of_DOAs
 end
 a_src = sensingMatrix(:,m_src);
 
-NmonteCarlo = 1;
+NmonteCarlo = 100;
 LSnapshot = Nsnapshot * NmonteCarlo; % Number of array data vector observations "Large"
 
 
@@ -286,24 +286,28 @@ for isnr = 1:length(SNRs)
 
 
 %% Results
+        errorDOAseparation = 5; % [deg.]
+        errorDOAsepP = floor(errorDOAseparation/dphi) - 1;
+        errorDOApeak = Number_of_DOAs + 2;
+
         disp([' '])
         disp(['OLD models'])
 
-        [~, Ilocs] = findpeaks(abs(gamma),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv4p00 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv4p00 = []; end
         outputSBLv4p00 = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv4p00 = [outputsSBLv4p00; outputSBLv4p00];
 
-        [~, Ilocs] = findpeaks(abs(gamma1),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma1),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv4p11 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv4p11 = []; end
         outputSBLv4p11 = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv4p11 = [outputsSBLv4p11; outputSBLv4p11];
 
-        [~, Ilocs] = findpeaks(abs(gamma2),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma2),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv4p14 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv4p14 = []; end
@@ -314,28 +318,28 @@ for isnr = 1:length(SNRs)
         disp([' '])
         disp(['Gaussian models (-G)'])
 
-        [~, Ilocs] = findpeaks(abs(gamma3),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma3),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv4_Esa: ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv4Esa = []; end
         outputSBLv4_Esa = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv4Esa = [outputsSBLv4Esa; outputSBLv4_Esa];
 
-        [~, Ilocs] = findpeaks(abs(gamma30),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma30),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv5p01 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv5p01 = []; end
         outputSBLv5p01 = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv5p01 = [outputsSBLv5p01; outputSBLv5p01];
 
-        [~, Ilocs] = findpeaks(abs(gamma33),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma33),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv5p04 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv5p04 = []; end
         outputSBLv5p04 = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv5p04 = [outputsSBLv5p04; outputSBLv5p04];
 
-        [~, Ilocs] = findpeaks(abs(gamma34),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma34),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv5p05 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv5p05 = []; end
@@ -346,35 +350,35 @@ for isnr = 1:length(SNRs)
         disp([' '])
         disp(['MVT-loss models (-T)'])
 
-        [~, Ilocs] = findpeaks(abs(gamma4),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma4),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv4_Esa: ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv4EsaT = []; end
         outputSBLv4_EsaT = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv4EsaT = [outputsSBLv4EsaT; outputSBLv4_EsaT];
 
-        [~, Ilocs] = findpeaks(abs(gamma5),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma5),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBL4-T   : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv4T = []; end
         outputSBLv4_T = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv4T = [outputsSBLv4T; outputSBLv4_T];
 
-        [~, Ilocs] = findpeaks(abs(gamma10),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma10),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv5p01 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv5p01T = []; end
         outputSBLv5p01T = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv5p01T = [outputsSBLv5p01T; outputSBLv5p01T];
 
-        [~, Ilocs] = findpeaks(abs(gamma13),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma13),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv5p04 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv5p04T = []; end
         outputSBLv5p04T = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv5p04T = [outputsSBLv5p04T; outputSBLv5p04T];
 
-        [~, Ilocs] = findpeaks(abs(gamma14),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma14),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv5p05 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv5p05T = []; end
@@ -385,35 +389,35 @@ for isnr = 1:length(SNRs)
         disp([' '])
         disp(['Huber-loss models (-H)'])
 
-        [~, Ilocs] = findpeaks(abs(gamma6),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma6),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv4_Esa: ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv4EsaH = []; end
         outputSBLv4_EsaH = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv4EsaH = [outputsSBLv4EsaH; outputSBLv4_EsaH];
 
-        [~, Ilocs] = findpeaks(abs(gamma7),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma7),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBL4-H   : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv4H = []; end
         outputSBLv4_H = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv4H = [outputsSBLv4H; outputSBLv4_H];
 
-        [~, Ilocs] = findpeaks(abs(gamma20),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma20),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv5p01 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv5p01H = []; end
         outputSBLv5p01H = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv5p01H = [outputsSBLv5p01H; outputSBLv5p01H];
 
-        [~, Ilocs] = findpeaks(abs(gamma23),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma23),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv5p04 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv5p04H = []; end
         outputSBLv5p04H = struct('theta',phi_vec(Ilocs),'error',DoA_error);
         outputsSBLv5p04H = [outputsSBLv5p04H; outputSBLv5p04H];
 
-        [~, Ilocs] = findpeaks(abs(gamma24),'SORTSTR','descend','Npeaks',Number_of_DOAs);
+        [~, Ilocs] = findpeaks(abs(gamma24),'MinPeakDistance',errorDOAsepP,'SORTSTR','descend','Npeaks',errorDOApeak);
         DoA_error = errorDOAcutoff(phi_vec(Ilocs),DOA_src,10);
         disp(['RMSE SBLv5p05 : ',num2str(sqrt(mean(power(DoA_error,2))))])
         if n_monteCarlo==1 && isnr==1, outputsSBLv5p05H = []; end
