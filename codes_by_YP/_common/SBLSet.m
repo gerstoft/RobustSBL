@@ -164,6 +164,9 @@ options.flag = 0; % was 1, changed by cfm 2021-08-09
 options.tic = 1;
 
 options.gamma_range=10^-4;
+
+options.activeIndices = 0;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End default options.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

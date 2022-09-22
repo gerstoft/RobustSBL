@@ -107,6 +107,9 @@ end
 gmin_global = realmax;
 % space allocation
 errornorm   = zeros(options.convergence.maxiter,1);
+if options.activeIndices == 1
+activeInd   = zeros(options.convergence.maxiter,Nsource);
+end
 
 % initialize with CBF output (assume single frequency)
 gamma        = zeros(Ntheta, 1);
@@ -218,6 +221,10 @@ for j1 = 1 : options.convergence.maxiter
         sigc(iF) = max(sigc(iF),maxnoise(iF)*10^-10); % snr>100 is unlikely larger than signal.
     end
     end
+
+    if options.activeIndices == 1
+    activeInd(j1,:) = Ilocs.';
+    end
         
     %% Convergence checks convergance and displays status reports
     % convergence indicator
@@ -282,6 +289,10 @@ report.results.final_iteration.x_post = x_post;
 end
 
 report.options = options;
+
+if options.activeIndices == 1
+report.results.activeIndices = activeInd;
+end
 
 % debug output parameters (assuming single frequency)
 %report.SigmaYinv = SigmaYinv;
