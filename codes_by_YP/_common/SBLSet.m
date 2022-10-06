@@ -167,6 +167,8 @@ options.gamma_range=10^-4;
 
 options.activeIndices = 0;
 
+options.activeIndRepN = 20; % for SBL_v5p07
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End default options.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
